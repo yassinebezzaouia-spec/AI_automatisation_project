@@ -1,0 +1,137 @@
+{
+  "name": "Email-Dis",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7617e2c5-4f8e-4f05-ab09-f0aff527307f",
+      "name": "Email Trigger (IMAP)",
+      "credentials": {
+        "imap": {
+          "id": "ii2VmP1SqY4Xtojm",
+          "name": "IMAP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an elite systems engineer assistant. Summarize the incoming email into a clean, concise layout with a maximum of 3 bullet points. Highlight the sender, the core message, and any urgent action items using clear Markdown.\n\n### 📨 New Email Summary\n- **From:** [Insert Sender Here]\n- **Core Message:** [Insert Summary Here]\n- **Urgent Action Items:** [Insert Actions Here]\n\nEmail Content to summarize:\n{{ $json.textPlain }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        416,
+        0
+      ],
+      "id": "7c432d4b-b256-4700-9ab9-829548849c13",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "llama3.2:latest",
+          "mode": "list",
+          "cachedResultName": "llama3.2:latest"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        224
+      ],
+      "id": "fc29449f-95a6-4644-bb9a-0cc90a484c59",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qQIuofil1Rhp8iM7",
+          "name": "OpenAI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "d2948987-b7c5-402e-b9c8-08f366fab435",
+      "name": "Discord",
+      "webhookId": "d42538c9-3ca4-4d6c-8458-999131034978",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "4OTBrPOa6kwhuANk",
+          "name": "Discord Webhook account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Email Trigger (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "5f634446-7e8e-43bf-859b-656da7455506",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a71c840d77f2e28c9831990cb8627a9b51b8c305dd154b015276179cb990edd2"
+  },
+  "nodeGroups": [],
+  "id": "sw6zby3UBAAHaPDD",
+  "tags": []
+}
